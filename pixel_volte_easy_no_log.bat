@@ -9,6 +9,13 @@ setlocal enableextensions enabledelayedexpansion
 set VER=2.2
 title Google Pixel VoLTE Easy v!VER!
 
+pushd %~dp0
+
+set NLM=^
+
+
+set NL=^^^%NLM%%NLM%^%NLM%%NLM%
+
 echo !PATH! | findstr /iv "system32;" >nul 2>&1
 if !errorlevel! == 0 (
 	PATH=!PATH!;"!SYSTEMROOT!\System32"
@@ -24,6 +31,55 @@ if !errorlevel! == 1 (
 	exit
 )
 
+REM Auto update check
+for /f "tokens=2" %%a in ('tools\curl.exe -Lsi "https://github.com/pixel-volte-easy/pixel-volte-easy/releases/latest" ^| findstr /i "^location"') do set LATEST_VER_CHECK=%%a
+@powershell.exe -Command "$LATEST_VER_CHECK='!LATEST_VER_CHECK!'; $LATEST_VER_CHECK -match '.*\/tag\/v(.*)'; $Matches.1 | Set-Content -Encoding String tmp_update_check;"
+set /p LATEST_VER=< tmp_update_check
+del /s /q tmp_update_check >nul 2>&1
+
+if "!LATEST_VER!" == "" (
+	goto VERSION_CHECK_PASS
+) else if "!VER!" LSS "!LATEST_VER!" (
+	REM Auto update
+	echo ============================================================ 
+	echo.
+	echo Pixel VoLTE Easy 를 최신버전^(v!LATEST_VER!^)으로 업데이트 할 수 있습니다. 
+	echo "Enter"^(또는 "Y"^) 를 입력하시면 Pixel VoLTE Easy 를 업데이트 하며 
+	echo "C" 를 입력하시면 업데이트를 생략한 후 진행할 수 있고, 
+	echo "Q" 를 입력하시면 프로그램을 종료합니다. 
+	echo.
+	echo ============================================================ 
+	echo.
+	set /p PIXEL_VOLTE_EASY_UPDATE_CHK=업데이트 하시겠습니까? [Y/C/Q]%NL%%NL%: 
+	if /i "!PIXEL_VOLTE_EASY_UPDATE_CHK!" == "y" (
+		goto DO_PIXEL_VOLTE_EASY_UPDATE
+	) else if "!PIXEL_VOLTE_EASY_UPDATE_CHK!" == "" (
+		:DO_PIXEL_VOLTE_EASY_UPDATE
+		tools\curl.exe -Ls "https://github.com/pixel-volte-easy/pixel-volte-easy/releases/download/v!LATEST_VER!/pixel_volte_easy_v!LATEST_VER!.zip" -o "pixel_volte_easy_v!LATEST_VER!.zip"
+		echo.
+		echo 업데이트 다운로드 완료됨.
+		echo.
+		tools\7za.exe e "pixel_volte_easy_v!LATEST_VER!.zip" -aoa
+		del /s /q pixel_volte_easy_v!LATEST_VER!.zip >nul 2>&1
+		echo.
+		echo 업데이트 완료됨.
+		echo 업데이트의 적용을 위해 볼티지를 다시 실행해주시기 바랍니다.
+		echo.
+		pause
+		exit
+	) else if /i "!PIXEL_VOLTE_EASY_UPDATE_CHK!" == "c" (
+		goto VERSION_CHECK_PASS
+	) else if /i "!PIXEL_VOLTE_EASY_UPDATE_CHK!" == "q" (
+		goto QUIT
+	) else (
+		echo 잘못된 입력입니다. KT 나 SKT 또는 LGU 를 입력해주세요. 
+		goto CARRIER_SINGLE_CHECK
+	)
+) else (
+	goto VERSION_CHECK_PASS
+)
+
+:VERSION_CHECK_PASS
 platform-tools\adb.exe kill-server >nul 2>&1
 cls
 echo.
@@ -47,13 +103,6 @@ echo.
 echo.
 pause
 cls
-
-pushd %~dp0
-
-set NLM=^
-
-
-set NL=^^^%NLM%%NLM%^%NLM%%NLM%
 
 REM Get Windows Version
 for /f "tokens=*" %%a in ('wmic os get caption ^| findstr /v ^"Caption^" ^| findstr /v "^$"') do set USER_OS_VER=%%a
