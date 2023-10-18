@@ -6,7 +6,7 @@ REM chcp 437
 REM Set Language Korean
 REM chcp 949
 setlocal enableextensions enabledelayedexpansion
-set VER=2.2
+set VER=2.1
 title Google Pixel VoLTE Easy v!VER!
 
 pushd %~dp0
@@ -59,7 +59,7 @@ if "!LATEST_VER!" == "" (
 		echo.
 		echo 업데이트 다운로드 완료됨.
 		echo.
-		tools\7za.exe e "pixel_volte_easy_v!LATEST_VER!.zip" -aoa
+		tools\7za.exe x "pixel_volte_easy_v!LATEST_VER!.zip" -aoa
 		del /s /q pixel_volte_easy_v!LATEST_VER!.zip >nul 2>&1
 		echo.
 		echo 업데이트 완료됨.
