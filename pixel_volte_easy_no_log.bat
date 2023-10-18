@@ -59,7 +59,7 @@ if "!LATEST_VER!" == "" (
 		echo.
 		echo 업데이트 다운로드 완료됨.
 		echo.
-		tools\7za.exe x "pixel_volte_easy_v!LATEST_VER!.zip" -aoa -x!tools\7za.exe -x!tools\wtee.exe
+		tools\7za.exe x "pixel_volte_easy_v!LATEST_VER!.zip" -aoa -x^^!tools\7za.exe -x^^!tools\wtee.exe
 		if !errorlevel! == 0 (
 			del /s /q pixel_volte_easy_v!LATEST_VER!.zip >nul 2>&1
 			echo.
