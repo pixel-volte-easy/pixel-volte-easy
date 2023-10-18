@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- #ifdef FEATURE_PIXEL_MODEM_POLICY_ENHANCEMENT -->
+<policy name        = "TMO"
+        changelist  = "$Change: 20220303 $"
+        policy_ver  = "1.0"
+>
+  <initial>
+    <mcc_list name="US_mccs"> 310 311 312 313 314 315 316 330 302 334 348</mcc_list>
+
+    <!-- Define intial UE mode as NORMAL -->
+    <ue_mode>NORMAL</ue_mode>
+    <feature single_sim="normal"> dualmmode </feature>
+
+    <rat_capability_if base="none">
+      <include> G W L 5G</include>
+    </rat_capability_if>
+
+    <rf_bands base="hardware" />
+  </initial>
+
+  <!-- Make sure all RAT capabilities are restored before any carrier patches -->
+  <rat_capability base="none">
+    <include> G W L 5G </include>
+  </rat_capability>
+
+  <!-- Wait for online or if location is unknown  -->
+  <if>
+    <any_of>
+      <not> <phone_operating_mode> ONLINE </phone_operating_mode> </not>
+      <not> <have_serving_system /> </not>
+    </any_of>
+    <then>
+      <stop />
+    </then>
+  </if>
+
+  <!-- Determine configuration based on location -->
+  <select>
+    <!-- Domestic -->
+    <case>
+      <all_of>
+		<location_mcc_in list="US_mccs" />
+      </all_of>
+      <then>
+        <rat_capability base="none">
+          <include> G W L 5G</include>
+        </rat_capability>
+      </then>
+    </case>
+
+    <!-- Roaming -->
+    <case>
+      <all_of>
+        <not> <location_mcc_in list="US_mccs" />
+      </all_of>
+      <then>
+        <rat_capability base="none">
+          <include> G W L</include>
+        </rat_capability>
+      </then>
+    </case>
+  </select>
+</policy>
+<!-- #endif /* FEATURE_PIXEL_MODEM_POLICY_ENHANCEMENT */ -->

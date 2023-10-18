@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- CA band combo
+$Header:  $
+-->
+<policy name        = "generic"
+        changelist  = "$Change: 17037999 $"
+        policy_ver  = "2020.11.02"
+>
+
+  <initial>
+    <!--  Testbed Sims  -->
+    <plmn_list name="testbed_sims">450-00</plmn_list>
+    <mcc_list name="home_mccs"> 450 001 </mcc_list>
+	  
+  </initial>
+
+  <if>
+    <any_of>
+      <not> <phone_operating_mode> ONLINE </phone_operating_mode> </not>
+      <not> <have_location /> </not>
+    </any_of>
+    <then>
+      <stop />
+    </then>
+  </if>
+  
+<select>  
+  <!--  RULE#1 - TestBed : ca combo off -->    
+  <case>
+    <imsi_plmn_in list="testbed_sims" />
+    <then>
+      <ca_band_combos string="DISABLED;"/>
+    </then>
+  </case>
+
+  <!--  RULE#2 - ROAM Case : ca combo off -->    
+  <case>
+    <not><location_mcc_in list="home_mccs" /></not>
+    <then>
+      <ca_band_combos string="DISABLED;"/>
+    </then>
+  </case>
+
+  <!--  RULE#2 - Otherwise Case : ca combo ON -->    
+  <case>
+    <true />
+    <then>
+      <ca_band_combos string=""/>
+    </then>
+  </case>
+</select>
+ 
+</policy>

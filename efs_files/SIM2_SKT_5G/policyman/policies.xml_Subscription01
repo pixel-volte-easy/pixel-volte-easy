@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Execution Ordering Configuration file
+-->
+<policy_list name        = "XML Ordering"
+             changelist  = "$Change: 20710443 $"
+             policy_ver  = "8000.0.7"
+>
+  <policy file="/policyman/device_config.xml" execute_for="device" load_for="device" refresh_on_sim_change="false" />
+  <policy file="/policyman/carrier_policy.xml" execute_for="subs" load_for="subs" refresh_on_sim_change="true" />
+  <policy file="/nv/item_files/modem/lte/rrc/lte_feature_ca.xml" execute_for="subs" load_for="subs" refresh_on_sim_change="true" />
+</policy_list>

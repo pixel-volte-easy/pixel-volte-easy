@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Carrier Policy with KT requirements
+     $Header: //commercial/MPSS.HI.1.0.c8.11/Main/modem_proc/mmcp/policyman/configurations/Carrier/KT/subsidized/carrier_policy.xml#1 $
+-->
+<policy name            = "KT"
+        changelist      = "$Change: 23213935 $"
+        policy_ver      = "121.1.0"
+>
+
+  <initial>
+
+    <mcc_list name="home_mccs"> 450 </mcc_list>
+
+    <define_fullrat_config>
+      <rat_capability base="current">
+        <include> 5G </include>
+      </rat_capability>
+    </define_fullrat_config>
+
+    <feature single_sim="normal"> dualmmode </feature>
+
+  </initial>
+
+  <if>
+    <any_of>
+      <not> <phone_operating_mode> ONLINE </phone_operating_mode> </not>
+      <not> <have_location /> </not>
+    </any_of>
+    <then>
+      <stop />
+    </then>
+  </if>
+
+  <!-- Beyond this point, the device is ONLINE and has a location. -->
+  <svc_mode> FULL </svc_mode>
+
+  <if>
+    <location_mcc_in list="home_mccs" />
+    <then>
+      <rat_capability base="current" >
+        <include> LTE 5G </include>
+      </rat_capability>
+    </then>
+    <else>
+      <rat_capability base="current" >
+        <exclude>WCDMA LTE 5G</exclude>
+      </rat_capability>
+    </else>
+  </if>
+
+</policy>

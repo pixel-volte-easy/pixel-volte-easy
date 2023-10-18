@@ -1,0 +1,39 @@
+on init
+    chmod 666 /dev/diag
+
+on post-fs-data
+    # Modem logging collection
+    mkdir /data/vendor/radio 0777 radio radio
+    mkdir /data/vendor/radio/diag_logs 0777 system system
+    # WLAN logging collection
+    mkdir /data/vendor/wifi 0777 system system
+    mkdir /data/vendor/wifi/cnss_diag 0777 system system
+
+on property:sys.usb.config=diag,serial_cdev,rmnet_gsi,adb && property:sys.usb.configfs=1
+    start adbd
+    start port-bridge
+
+on property:sys.usb.ffs.ready=1 && property:sys.usb.config=diag,serial_cdev,rmnet_gsi,adb && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/configs/b.1/strings/0x409/configuration diag_serial_cdev_rmnet_gsi_adb
+    rm /config/usb_gadget/g1/configs/b.1/function0
+    rm /config/usb_gadget/g1/configs/b.1/function1
+    rm /config/usb_gadget/g1/configs/b.1/function2
+    rm /config/usb_gadget/g1/configs/b.1/function3
+    rm /config/usb_gadget/g1/configs/b.1/function4
+    rm /config/usb_gadget/g1/configs/b.1/function5
+    rm /config/usb_gadget/g1/configs/b.1/f0
+    rm /config/usb_gadget/g1/configs/b.1/f1
+    rm /config/usb_gadget/g1/configs/b.1/f2
+    rm /config/usb_gadget/g1/configs/b.1/f3
+    rm /config/usb_gadget/g1/configs/b.1/f4
+    rm /config/usb_gadget/g1/configs/b.1/f5
+    write /config/usb_gadget/g1/idVendor 0x05C6
+    write /config/usb_gadget/g1/idProduct 0x9091
+    write /config/usb_gadget/g1/os_desc/use 1
+    symlink /config/usb_gadget/g1/functions/diag.diag /config/usb_gadget/g1/configs/b.1/function0
+    symlink /config/usb_gadget/g1/functions/cser.dun.0 /config/usb_gadget/g1/configs/b.1/function1
+    symlink /config/usb_gadget/g1/functions/gsi.rmnet /config/usb_gadget/g1/configs/b.1/function2
+    symlink /config/usb_gadget/g1/functions/ffs.adb /config/usb_gadget/g1/configs/b.1/function3
+    write /config/usb_gadget/g1/UDC ${sys.usb.controller}
+    setprop sys.usb.state ${sys.usb.config}
+
