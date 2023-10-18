@@ -59,13 +59,21 @@ if "!LATEST_VER!" == "" (
 		echo.
 		echo 업데이트 다운로드 완료됨.
 		echo.
-		tools\7za.exe x "pixel_volte_easy_v!LATEST_VER!.zip" -aoa
-		echo.
-		echo 업데이트 완료됨.
-		echo 업데이트의 적용을 위해 볼티지를 다시 실행해주시기 바랍니다.
-		echo.
-		pause
-		exit
+		tools\7za.exe x "pixel_volte_easy_v!LATEST_VER!.zip" -aoa -x!tools\7za.exe -x!tools\wtee.exe
+		if !errorlevel! == 0 (
+			del /s /q pixel_volte_easy_v!LATEST_VER!.zip >nul 2>&1
+			echo.
+			echo 업데이트 완료됨.
+			echo 업데이트의 적용을 위해 볼티지를 다시 실행해주시기 바랍니다.
+			echo.
+			pause
+			exit
+		) else (
+			echo.
+			echo 압축해제 중 문제가 발생했습니다. 
+			echo 우선 현재 버전으로 볼티지를 실행합니다.
+			echo.
+		)
 	) else if /i "!PIXEL_VOLTE_EASY_UPDATE_CHK!" == "c" (
 		goto VERSION_CHECK_PASS
 	) else if /i "!PIXEL_VOLTE_EASY_UPDATE_CHK!" == "q" (
