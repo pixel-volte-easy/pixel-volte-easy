@@ -6,7 +6,7 @@ REM chcp 437
 REM Set Language Korean
 REM chcp 949
 setlocal enableextensions enabledelayedexpansion
-set VER=2.1
+set VER=2.2
 title Google Pixel VoLTE Easy v!VER!
 
 pushd %~dp0
